@@ -4,11 +4,11 @@
 
 START_TEST(test_add)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
     stimuli[0][0] = 0xB00A0101;
     stimuli[1][28] = 0xB00B0101;
     stimuli[5][20] = 0xB00B0012;
@@ -18,26 +18,26 @@ START_TEST(test_add)
     stimuli[19][33] = 0xA10A0101;
     stimuli[22][37] = 0xA10A1101;
 
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(0, 0, &stimuli[0][0]);
+    retval = dsched_add_entry(0, 0, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(19, 33, &stimuli[19][33]);
+    retval = dsched_add_entry(19, 33, &stimuli[19][33]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(6, 35, &stimuli[6][35]);
+    retval = dsched_add_entry(6, 35, &stimuli[6][35]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(10, 50, &stimuli[10][50]);
+    retval = dsched_add_entry(10, 50, &stimuli[10][50]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(22, 37, &stimuli[22][37]);
+    retval = dsched_add_entry(22, 37, &stimuli[22][37]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(15, 18, &stimuli[15][18]);
+    retval = dsched_add_entry(15, 18, &stimuli[15][18]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -52,20 +52,20 @@ END_TEST
 
 START_TEST(test_add_once)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
 
     stimuli[2][5] = 0xB00B0002;
     stimuli[0][0] = stimuli[2][5];
-    retval = DSched_AddEntry(2, 5, &stimuli[2][5]);
+    retval = dsched_add_entry(2, 5, &stimuli[2][5]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -80,22 +80,22 @@ END_TEST
 
 START_TEST(test_add_one_before)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
     stimuli[1][28] = 0xB00B0011;
     stimuli[2][3] = 0xB00B0012;
     stimuli[0][0] = stimuli[2][3];
-    retval = DSched_AddEntry(2, 3, &stimuli[2][3]);
+    retval = dsched_add_entry(2, 3, &stimuli[2][3]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -110,22 +110,22 @@ END_TEST
 
 START_TEST(test_add_one_after)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
     stimuli[1][28] = 0xB00B0101;
     stimuli[5][20] = 0xB00B0012;
     stimuli[0][0] = stimuli[5][20];
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -140,10 +140,10 @@ END_TEST
 
 START_TEST(test_add_overflow)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
@@ -154,38 +154,38 @@ START_TEST(test_add_overflow)
     for (int i = 0; i < DSCHED_ENTRIES_MAX; i++) {
         uint32_t h = 13 + i / 60;
         uint32_t m = i % 60;
-        retval = DSched_AddEntry(h, m, &stimuli[h][m]);
+        retval = dsched_add_entry(h, m, &stimuli[h][m]);
         ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add %0d entry failed!", i);
     }
 
-    retval = DSched_AddEntry(0, 0, &stimuli[0][0]);
+    retval = dsched_add_entry(0, 0, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_OVERFLOW, "Expected overflow but nothing happen!");
 }
 END_TEST
 
 START_TEST(test_add_collision)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
 
     stimuli[2][5] = 0xB00B0002;
-    retval = DSched_AddEntry(2, 5, &stimuli[2][5]);
+    retval = dsched_add_entry(2, 5, &stimuli[2][5]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
-    retval = DSched_AddEntry(2, 5, &stimuli[0][0]);
+    retval = dsched_add_entry(2, 5, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_FAIL, "Expect collision but nothing happen!");
 }
 END_TEST
 
 START_TEST(test_add_after_remove)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
     stimuli[0][0] = 0xB00A0101;
     stimuli[1][28] = 0xB00B0101;
     stimuli[5][20] = 0xB00B0012;
@@ -195,43 +195,43 @@ START_TEST(test_add_after_remove)
     stimuli[19][33] = 0xA10A0101;
     stimuli[22][37] = 0xA10A1101;
 
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(0, 0, &stimuli[0][0]);
+    retval = dsched_add_entry(0, 0, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(19, 33, &stimuli[19][33]);
+    retval = dsched_add_entry(19, 33, &stimuli[19][33]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(6, 35, &stimuli[6][35]);
+    retval = dsched_add_entry(6, 35, &stimuli[6][35]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(10, 50, &stimuli[10][50]);
+    retval = dsched_add_entry(10, 50, &stimuli[10][50]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(22, 37, &stimuli[22][37]);
+    retval = dsched_add_entry(22, 37, &stimuli[22][37]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(15, 18, &stimuli[15][18]);
+    retval = dsched_add_entry(15, 18, &stimuli[15][18]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     stimuli[1][28] = 0;
-    retval = DSched_RemoveEntry(1, 28);
+    retval = dsched_remove_entry(1, 28);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
     stimuli[5][20] = 0;
-    retval = DSched_RemoveEntry(5, 20);
+    retval = dsched_remove_entry(5, 20);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
     stimuli[15][18] = 0;
-    retval = DSched_RemoveEntry(15, 18);
+    retval = dsched_remove_entry(15, 18);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
 
     stimuli[5][20] = 0xE0016655;
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
     stimuli[10][16] = 0xE0016666;
-    retval = DSched_AddEntry(10, 16, &stimuli[10][16]);
+    retval = dsched_add_entry(10, 16, &stimuli[10][16]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -246,11 +246,11 @@ END_TEST
 
 START_TEST(test_remove)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef data;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t data;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
     stimuli[0][0] = 0xB00A0101;
     stimuli[1][28] = 0xB00B0101;
     stimuli[5][20] = 0xB00B0012;
@@ -260,36 +260,36 @@ START_TEST(test_remove)
     stimuli[19][33] = 0xA10A0101;
     stimuli[22][37] = 0xA10A1101;
 
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(0, 0, &stimuli[0][0]);
+    retval = dsched_add_entry(0, 0, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(19, 33, &stimuli[19][33]);
+    retval = dsched_add_entry(19, 33, &stimuli[19][33]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(6, 35, &stimuli[6][35]);
+    retval = dsched_add_entry(6, 35, &stimuli[6][35]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(10, 50, &stimuli[10][50]);
+    retval = dsched_add_entry(10, 50, &stimuli[10][50]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(22, 37, &stimuli[22][37]);
+    retval = dsched_add_entry(22, 37, &stimuli[22][37]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(15, 18, &stimuli[15][18]);
+    retval = dsched_add_entry(15, 18, &stimuli[15][18]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
     stimuli[1][28] = 0;
-    retval = DSched_RemoveEntry(1, 28);
+    retval = dsched_remove_entry(1, 28);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
     stimuli[5][20] = 0;
-    retval = DSched_RemoveEntry(5, 20);
+    retval = dsched_remove_entry(5, 20);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
     stimuli[15][18] = 0;
-    retval = DSched_RemoveEntry(15, 18);
+    retval = dsched_remove_entry(15, 18);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Remove entry failed!");
 
     for (int h = 0; h < 24; h++) {
         for (int m = 0; m < 60; m++) {
-            retval = DSched_Exec(h, m, &data);
+            retval = dsched_exec(h, m, &data);
             if (retval == DSCHED_STATUS_SUCCESS) {
                 ck_assert_msg((data == stimuli[h][m]), "Got 0x%08x, expected 0x%08x at %02d:%02d", data, stimuli[h][m], h, m);
             } else if (retval == DSCHED_STATUS_EMPTY) {
@@ -304,39 +304,39 @@ END_TEST
 
 START_TEST(test_remove_underflow)
 {
-    DSched_Status_TypeDef retval;
+    dsched_status_t retval;
 
-    DSched_Init();
+    dsched_init();
 
-    retval = DSched_RemoveEntry(2, 5);
+    retval = dsched_remove_entry(2, 5);
     ck_assert_msg(retval == DSCHED_STATUS_UNDERFLOW, "Expected underflow but nothing happpen!");
 }
 END_TEST
 
 START_TEST(test_remove_nonexistent)
 {
-    DSched_Status_TypeDef retval;
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
 
-    DSched_Init();
+    dsched_init();
 
     stimuli[2][5] = 0xB00B0002;
-    retval = DSched_AddEntry(2, 5, &stimuli[2][5]);
+    retval = dsched_add_entry(2, 5, &stimuli[2][5]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
-    retval = DSched_RemoveEntry(0, 0);
+    retval = dsched_remove_entry(0, 0);
     ck_assert_msg(retval == DSCHED_STATUS_FAIL, "Expected fail but nothing happpen!");
 }
 END_TEST
 
 START_TEST(test_get_schedule)
 {
-    DSched_Status_TypeDef retval;
-    DSched_Entry_TypeDef entries[DSCHED_ENTRIES_MAX];
-    DSched_EntryData_TypeDef stimuli[24][60] = { { 0 } };
+    dsched_status_t retval;
+    dsched_entry_t entries[DSCHED_ENTRIES_MAX];
+    dsched_entry_data_t stimuli[24][60] = { { 0 } };
     uint32_t total_num;
 
-    DSched_Init();
+    dsched_init();
 
     stimuli[0][0] = 0xB00A0101;
     stimuli[1][28] = 0xB00B0101;
@@ -347,24 +347,24 @@ START_TEST(test_get_schedule)
     stimuli[19][33] = 0xA10A0101;
     stimuli[22][37] = 0xA10A1101;
 
-    retval = DSched_AddEntry(1, 28, &stimuli[1][28]);
+    retval = dsched_add_entry(1, 28, &stimuli[1][28]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(5, 20, &stimuli[5][20]);
+    retval = dsched_add_entry(5, 20, &stimuli[5][20]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(0, 0, &stimuli[0][0]);
+    retval = dsched_add_entry(0, 0, &stimuli[0][0]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(19, 33, &stimuli[19][33]);
+    retval = dsched_add_entry(19, 33, &stimuli[19][33]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(6, 35, &stimuli[6][35]);
+    retval = dsched_add_entry(6, 35, &stimuli[6][35]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(10, 50, &stimuli[10][50]);
+    retval = dsched_add_entry(10, 50, &stimuli[10][50]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(22, 37, &stimuli[22][37]);
+    retval = dsched_add_entry(22, 37, &stimuli[22][37]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
-    retval = DSched_AddEntry(15, 18, &stimuli[15][18]);
+    retval = dsched_add_entry(15, 18, &stimuli[15][18]);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Add entry failed!");
 
-    retval = DSched_GetSchedule(&entries[0], &total_num);
+    retval = dsched_get_schedule(&entries[0], &total_num);
     ck_assert_msg(retval == DSCHED_STATUS_SUCCESS, "Get schedule failed!");
     ck_assert_msg(total_num == 8, "Expected to get 8 entries!");
 
@@ -377,7 +377,7 @@ START_TEST(test_get_schedule)
     ck_assert_msg((entries[6].hour * 60 + entries[6].minute) < (entries[7].hour * 60 + entries[7].minute), "entry[6] should be earlier than entry[7]");
 
     for (uint32_t i = 0; i < total_num; i++) {
-        DSched_EntryData_TypeDef data = stimuli[entries[i].hour][entries[i].minute];
+        dsched_entry_data_t data = stimuli[entries[i].hour][entries[i].minute];
         ck_assert_msg(entries[i].data == data, "Got 0x%08x, expected 0x%08x at %02d:%02d", entries[i].data, data, entries[i].hour, entries[i].minute);
     }
 }
@@ -385,13 +385,13 @@ END_TEST
 
 START_TEST(test_get_schedule_empty)
 {
-    DSched_Status_TypeDef retval;
-    DSched_Entry_TypeDef entries[DSCHED_ENTRIES_MAX];
+    dsched_status_t retval;
+    dsched_entry_t entries[DSCHED_ENTRIES_MAX];
     uint32_t total_num;
 
-    DSched_Init();
+    dsched_init();
 
-    retval = DSched_GetSchedule(&entries[0], &total_num);
+    retval = dsched_get_schedule(&entries[0], &total_num);
     ck_assert_msg(retval == DSCHED_STATUS_FAIL, "Expected fail but nothing happen!");
     ck_assert_msg(total_num == 0, "Schedule is not empty!");
 }

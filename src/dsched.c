@@ -2,50 +2,50 @@
 #include "dsched.h"
 
 //-- Private types -----------------------------------------------------------
-typedef struct Entry {
-    bool empty;                    // if entry is present, or not and can be overwritten
-    uint32_t minute;               // minute which entry is assigned
-    uint32_t hour;                 // hour which entry is assigned
-    DSched_EntryData_TypeDef data; // data for a entry
-    struct Entry* next;            // next entry
-    struct Entry* prev;            // prev entry
-} Entry_TypeDef;
+typedef struct entry {
+    bool empty;               // if entry is present, or not and can be overwritten
+    uint32_t minute;          // minute which entry is assigned
+    uint32_t hour;            // hour which entry is assigned
+    dsched_entry_data_t data; // data for a entry
+    struct entry* next;       // next entry
+    struct entry* prev;       // prev entry
+} entry_t;
 
 //-- Private functions prototypes ----------------------------------------------
 static uint32_t time_to_dminute(uint32_t hour, uint32_t minute);
-static DSched_Status_TypeDef get_nearest_entry(uint32_t dminute, Entry_TypeDef** entry);
+static dsched_status_t get_nearest_entry(uint32_t dminute, entry_t** entry);
 static int compare_entries_time(const void* a, const void* b);
 
 //-- Private variables ---------------------------------------------------------
 static struct
 {
     uint32_t entries_total;
-    Entry_TypeDef entry_slot[DSCHED_ENTRIES_MAX];
-    Entry_TypeDef* next_entry;
+    entry_t entry_slot[DSCHED_ENTRIES_MAX];
+    entry_t* next_entry;
 } schedule;
 
 //-- Exported functions --------------------------------------------------------
-DSched_Status_TypeDef DSched_Init(void)
+dsched_status_t dsched_init(void)
 {
     schedule.next_entry = NULL;
     schedule.entries_total = 0;
-    memset(schedule.entry_slot, 0, sizeof (schedule.entry_slot));
+    memset(schedule.entry_slot, 0, sizeof(schedule.entry_slot));
     for (uint32_t i = 0; i < DSCHED_ENTRIES_MAX; i++)
         schedule.entry_slot[i].empty = true;
 
     return DSCHED_STATUS_SUCCESS;
 }
 
-DSched_Status_TypeDef DSched_Exec(uint32_t hour, uint32_t minute, DSched_EntryData_TypeDef* data)
+dsched_status_t dsched_exec(uint32_t hour, uint32_t minute, dsched_entry_data_t* data)
 {
     uint32_t dminute = time_to_dminute(hour, minute);
 
     if (schedule.entries_total) {
-        Entry_TypeDef* nearest_entry = NULL;
+        entry_t* nearest_entry = NULL;
         if (!schedule.next_entry) {
             // on the first call we should select next entry from the nearest to current time
             // and return it's data
-            DSched_Status_TypeDef retval;
+            dsched_status_t retval;
             retval = get_nearest_entry(dminute, &nearest_entry);
             if (retval != DSCHED_STATUS_SUCCESS)
                 return retval;
@@ -67,7 +67,7 @@ DSched_Status_TypeDef DSched_Exec(uint32_t hour, uint32_t minute, DSched_EntryDa
     return DSCHED_STATUS_EMPTY;
 }
 
-DSched_Status_TypeDef DSched_AddEntry(uint32_t hour, uint32_t minute, DSched_EntryData_TypeDef* data)
+dsched_status_t dsched_add_entry(uint32_t hour, uint32_t minute, dsched_entry_data_t* data)
 {
     uint32_t dminute = time_to_dminute(hour, minute);
 
@@ -95,8 +95,8 @@ DSched_Status_TypeDef DSched_AddEntry(uint32_t hour, uint32_t minute, DSched_Ent
             return DSCHED_STATUS_OVERFLOW; // if all slots are not empty - index will not be updated
 
         // find the nearest not empty entry by time
-        Entry_TypeDef* nearest_entry = NULL;
-        DSched_Status_TypeDef retval;
+        entry_t* nearest_entry = NULL;
+        dsched_status_t retval;
         retval = get_nearest_entry(dminute, &nearest_entry);
         if (retval != DSCHED_STATUS_SUCCESS)
             return retval;
@@ -125,7 +125,7 @@ DSched_Status_TypeDef DSched_AddEntry(uint32_t hour, uint32_t minute, DSched_Ent
     return DSCHED_STATUS_SUCCESS;
 }
 
-DSched_Status_TypeDef DSched_RemoveEntry(uint32_t hour, uint32_t minute)
+dsched_status_t dsched_remove_entry(uint32_t hour, uint32_t minute)
 {
     uint32_t dminute = time_to_dminute(hour, minute);
 
@@ -154,9 +154,9 @@ DSched_Status_TypeDef DSched_RemoveEntry(uint32_t hour, uint32_t minute)
     return DSCHED_STATUS_SUCCESS;
 }
 
-DSched_Status_TypeDef DSched_GetSchedule(DSched_Entry_TypeDef* entries, uint32_t* total_num)
+dsched_status_t dsched_get_schedule(dsched_entry_t* entries, uint32_t* total_num)
 {
-    DSched_Entry_TypeDef tmp_entries[DSCHED_ENTRIES_MAX];
+    dsched_entry_t tmp_entries[DSCHED_ENTRIES_MAX];
     uint32_t tmp_total_num = 0;
 
     for (uint32_t i = 0; i < DSCHED_ENTRIES_MAX; i++) {
@@ -187,9 +187,9 @@ static uint32_t time_to_dminute(uint32_t hour, uint32_t minute)
     return hour * 60 + minute;
 }
 
-static DSched_Status_TypeDef get_nearest_entry(uint32_t dminute, Entry_TypeDef** entry)
+static dsched_status_t get_nearest_entry(uint32_t dminute, entry_t** entry)
 {
-    Entry_TypeDef* nearest_entry = NULL;
+    entry_t* nearest_entry = NULL;
     for (uint32_t i = 0; i < DSCHED_ENTRIES_MAX; i++) {
         if (!schedule.entry_slot[i].empty) {
             if (!nearest_entry)
@@ -209,8 +209,8 @@ static DSched_Status_TypeDef get_nearest_entry(uint32_t dminute, Entry_TypeDef**
 
 static int compare_entries_time(const void* a, const void* b)
 {
-    const DSched_Entry_TypeDef* arg1 = a;
-    const DSched_Entry_TypeDef* arg2 = b;
+    const dsched_entry_t* arg1 = a;
+    const dsched_entry_t* arg2 = b;
 
     return time_to_dminute(arg1->hour, arg1->minute) - time_to_dminute(arg2->hour, arg2->minute);
 }
