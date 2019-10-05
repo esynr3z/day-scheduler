@@ -4,6 +4,6 @@ This library allows you to assign a dataset (integer, structure, function pointe
 You pass the current hour and minute through the API and get appropriate data. This can be useful in embedded systems in combination with RTC, e.g. switch relays, controlling LEDs and other tasks.
 
 * no platform-depended code
-* no dynamic memory allocaton
+* no dynamic memory allocation
 * schedule as a linked list
 * entries can be added/removed in a runtime
